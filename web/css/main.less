@@ -1,0 +1,69 @@
+/* (c) 2015 Ramis Wachtler */
+/* Imports */
+@import url(https://fonts.googleapis.com/css?family=Quicksand:400,300);
+@import "../bower_components/bootstrap/dist/css/bootstrap.min.css";
+@import "../bower_components/bootstrap/dist/css/bootstrap-theme.min.css";
+@import "mixins";
+
+/* Custom mixins */
+
+/* Fonts */
+@quickSand: 'Quicksand', sans-serif;
+/* Colors */
+@white: #FFFFFF;
+@black: #000000;
+@gray: #555555;
+@lightgray: #777777;
+@lightergray: #EEEEEE;
+
+@whiteSmoke: #ECECEC;
+@honeyFlower: #674172;
+
+/* === General === */
+html, body {
+  height: 100%;
+  font-size: 16px;
+  background: @whiteSmoke;
+  font-family: @quickSand;
+  font-weight: 300;
+}
+
+body{
+  padding-top: 70px;
+}
+
+h1,h2,h3,h4,h5,h6{
+  font-weight: normal;
+}
+
+a{
+  color: @honeyFlower;
+  &:hover, &:focus{
+    background: @honeyFlower;
+    color: @white;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+nav.navbar-default{
+  background: @honeyFlower;
+  a.navbar-brand {
+    color: @white;
+    font-weight: normal;
+    &:hover, &:focus{
+      color: @white;
+    }
+  }
+  p.navbar-text{
+    padding:0 15px;
+    color: @white;
+  }
+}
+
+main{
+
+}

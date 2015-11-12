@@ -1,0 +1,23 @@
+{
+  "name": "EasyInstall",
+  "version": "1.0.0",
+  "authors": [
+    "Ramis Wachtler"
+  ],
+  "description": "Configuration tool for automated web-development",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.5"
+  }
+}
