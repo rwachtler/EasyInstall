@@ -4,3 +4,6 @@ app:
 wordpress:
     resource: "@AppBundle/Extensions/WordPress/"
     type:     annotation
+check-connection:
+    resource: "@AppBundle/Utils/"
+    type: annotation

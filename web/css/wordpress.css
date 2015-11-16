@@ -118,8 +118,10 @@ nav.navbar-default p.navbar-text {
   padding: 0 15px;
   color: #ffffff;
 }
-main div#toolbox {
-  background: #ffffff;
+main div.panel-footer button.btn-default,
+main div.panel-footer button.btn-danger,
+main div.panel-footer button.btn-success {
+  margin: 0 10px;
 }
 main p.help-block {
   font-size: 0.8em;

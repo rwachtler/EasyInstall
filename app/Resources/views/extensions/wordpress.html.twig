@@ -5,7 +5,7 @@
 {% block main %}
 <h1 class="text-center">WordPress {{ wordpressData.getVersion() }}</h1>
 <form class="form-horizontal">
-    <div id="toolbox" class="panel panel-default">
+    <div id="database-information" class="panel panel-default">
         <div class="panel-heading">
             <h3>Database setup</h3>
             <p class="text-info">Enter your database connection details</p>
@@ -52,6 +52,30 @@
                     <input type="checkbox"> Clean install (no demo-content is included)
                 </label>
             </div>
+        </div>
+        <div class="panel-footer clearfix">
+            <a href="#required-information" id="next-required-info" title="Next step" class="btn btn-primary pull-right next">Next step</a>
+            <button id="check-database-connection" title="Check database connection" class="btn btn-default pull-right">Check database connection <span class="glyphicon glyphicon-refresh hidden"></span></button>
+            <button id="create-database" title="Create database" class="btn btn-default pull-right">Create database <span class="glyphicon glyphicon-plus"></span></button>
+        </div>
+    </div>
+    <div id="required-information" class="panel panel-default">
+        <div class="panel-heading">
+            <h3>Required information</h3>
+            <p class="text-info">This information can be changed later</p>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-2" for="site-title">Site title</label>
+                <div class="col-xs-6">
+                    <input type="text" class="form-control" id="site-title" placeholder="My WordPress Site">
+                </div>
+                <p class="help-block">
+                    Name your site
+                </p>
+            </div>
+        <div class="panel-footer clearfix">
+            <a href="#theme-settings" id="next-theme-settings" title="Next step" class="btn btn-primary pull-right next">Next step</a>
         </div>
     </div>
 </form>
