@@ -1,0 +1,126 @@
+/* (c) 2015 Ramis Wachtler */
+/* Imports */
+@import url(https://fonts.googleapis.com/css?family=Quicksand:400,300);
+@import "../bower_components/bootstrap/dist/css/bootstrap.min.css";
+@import "../bower_components/bootstrap/dist/css/bootstrap-theme.min.css";
+/* (c) 2015 Ramis Wachtler */
+/*
+ * Applies a text-shadow
+ * @property color - shadow color
+ * @property offsetX - horizontal shadow offset
+ * @property offsetY - vertical shadow offset
+ * @property blurRadius - radius of the shadow blur effect
+ */
+/*
+ * Applies a box-shadow
+ * @property color - shadow color
+ * @property offsetX - horizontal shadow offset
+ * @property offsetY - vertical shadow offset
+ * @property blurRadius - radius of the shadow blur effect
+ */
+/*
+ * Applies a transition to a given property, with a given duration
+ * @property property - property of transition
+ * @property duration - the time value for the transition execution
+ */
+/*
+ * Applies a transform operation to an element
+ * @property string - represents a transform string (e.g. translate3d(x,y,z);)
+ */
+/* Resets */
+.no-boxshadow {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.no-textshadow {
+  text-shadow: none;
+}
+.reset-anchor {
+  border: none;
+  text-decoration: none;
+  outline: none;
+  text-shadow: none;
+  box-shadow: none;
+}
+.reset-anchor:focus,
+.reset-anchor:hover,
+.reset-anchor:active {
+  border: none;
+  text-decoration: none;
+  outline: none;
+  text-shadow: none;
+  box-shadow: none;
+}
+.reset-button {
+  border: none;
+  text-decoration: none;
+  outline: none;
+  text-shadow: none;
+  box-shadow: none;
+}
+.reset-button:focus,
+.reset-button:hover,
+.reset-button:active {
+  border: none;
+  text-decoration: none;
+  outline: none;
+  text-shadow: none;
+  box-shadow: none;
+}
+/* Custom mixins */
+/* Fonts */
+/* Colors */
+/* === General === */
+html,
+body {
+  height: 100%;
+  font-size: 16px;
+  background: #ececec;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 300;
+}
+body {
+  padding-top: 70px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
+}
+a {
+  color: #674172;
+}
+a:hover,
+a:focus {
+  background: #674172;
+  color: #ffffff;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+nav.navbar-default {
+  background: #674172;
+}
+nav.navbar-default a.navbar-brand {
+  color: #ffffff;
+  font-weight: normal;
+}
+nav.navbar-default a.navbar-brand:hover,
+nav.navbar-default a.navbar-brand:focus {
+  color: #ffffff;
+}
+nav.navbar-default p.navbar-text {
+  padding: 0 15px;
+  color: #ffffff;
+}
+main div#toolbox {
+  background: #ffffff;
+}
+main p.help-block {
+  font-size: 0.8em;
+}

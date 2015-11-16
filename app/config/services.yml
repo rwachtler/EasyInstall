@@ -4,6 +4,8 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
+    http:
+        class: AppBundle\Services\Http
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    instanceDelivery:
+        class: AppBundle\Services\InstanceDelivery

@@ -22,6 +22,14 @@
 </header>
 <main class="container" role="main">
     <h1 class="text-center">Select a CMS</h1>
+    <div id="cms-select">
+        {% for extension in extensions %}
+            <a href="{{ path('_wordpress') }}" class="cms btn btn-default btn-lg">
+                {{ extension.getName() }} <br>
+                <span class="version">{{ extension.getVersion() }}</span>
+            </a>
+        {% endfor %}
+    </div>
 </main>
 <footer></footer>
 
