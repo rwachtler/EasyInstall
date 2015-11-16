@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>EasyInstall</title>
+    {% block stylesheet %}
     <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
+    {% endblock %}
 </head>
 <body>
 
+{% block header %}
 <header>
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
@@ -20,7 +23,9 @@
         </div>
     </nav>
 </header>
+{% endblock %}
 <main class="container" role="main">
+    {% block main %}
     <h1 class="text-center">Select a CMS</h1>
     <div id="cms-select">
         {% for extension in extensions %}
@@ -30,6 +35,7 @@
             </a>
         {% endfor %}
     </div>
+    {% endblock %}
 </main>
 <footer></footer>
 
