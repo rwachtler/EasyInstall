@@ -8,55 +8,31 @@
     <div id="database-information" class="panel panel-default">
         <div class="panel-heading">
             <h3>Database setup</h3>
-            <p class="text-info">Enter your database connection details <span class="label label-danger">Please do not use the live-system values</span></p>
+            <p class="text-info">Setup a database with following values <span class="label label-info">The database name including the prefix - {{ dbPrefix }}_{{ dbName }}</span></p>
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label class="col-xs-2" for="database-name">Database name</label>
-                <div class="col-xs-6">
-                    <input type="text" class="form-control" id="database-name" placeholder="wordpress">
-                </div>
-                <p class="help-block">
-                    Database name
-                </p>
-            </div>
-            <div class="form-group">
-                <label class="col-xs-2" for="database-username">Database username</label>
-                <div class="col-xs-6">
-                    <input type="text" class="form-control" id="database-username" placeholder="root">
-                </div>
-                <p class="help-block">
-                    MySQL username
-                </p>
-            </div>
-            <div class="form-group">
-                <label class="col-xs-2" for="database-password">Password</label>
-                <div class="col-xs-6">
-                    <input type="password" class="form-control" id="database-password" placeholder="password">
-                </div>
-                <p class="help-block">
-                    MySQL password
-                </p>
-            </div>
-            <div class="form-group">
                 <label class="col-xs-2" for="database-prefix">Table prefix</label>
                 <div class="col-xs-6">
-                    <input type="text" class="form-control" id="database-prefix" placeholder="wp_">
+                    <input type="text" readonly class="form-control" id="database-prefix" value="{{ dbPrefix }}_" placeholder="wp_">
                 </div>
                 <p class="help-block">
                     Useful when running multiple WordPress installations in a single database
                 </p>
             </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox"> Clean install <span class="label label-info">No demo content is included</span>
-                </label>
+            <div class="form-group">
+                <label class="col-xs-2" for="database-name">Database name</label>
+                <div class="col-xs-6">
+                    <input type="text" readonly class="form-control" id="database-name" value="{{ dbName }}" placeholder="wordpress">
+                </div>
+                <p class="help-block">
+                    Database name
+                </p>
             </div>
         </div>
         <div class="panel-footer clearfix">
             <a href="#required-information" id="next-required-info" title="Next step" class="btn btn-primary pull-right next">Next step</a>
             <button id="check-database-connection" title="Check database connection" class="btn btn-default pull-right">Check database connection <span class="glyphicon glyphicon-refresh hidden"></span></button>
-            <button id="create-database" title="Create database" class="btn btn-default pull-right">Create database <span class="glyphicon glyphicon-plus"></span></button>
         </div>
     </div>
     <div id="required-information" class="panel panel-default">
@@ -73,6 +49,11 @@
                 <p class="help-block">
                     Name your site
                 </p>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox"> Clean install <span class="label label-info">No demo content is included</span>
+                </label>
             </div>
         <div class="panel-footer clearfix">
             <a href="#theme-settings" id="next-theme-settings" title="Next step" class="btn btn-primary pull-right next">Next step</a>

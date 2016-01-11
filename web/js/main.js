@@ -12,8 +12,18 @@ $("#check-database-connection").click(function(e){
         "prefix" : $("database-prefix").val()
     };
 
-    var asyncRequest = $.post("/check-connection", dbData)
-       .done(function(response){
+
+    var asyncRequest = $.ajax({
+        url: "check-connection",
+        type: 'POST',
+        data: dbData,
+        cache: false,
+        crossDomain: false,
+        error: function() {
+            button.removeClass("btn-default").addClass("btn-danger");
+            button.text("Database connection failed ").append(buttonRefresh);
+        },
+        success: function(response) {
             if(response.status === "failure"){
                 button.removeClass("btn-default").addClass("btn-danger");
                 button.text("Database connection failed ").append(buttonRefresh);
@@ -22,11 +32,8 @@ $("#check-database-connection").click(function(e){
                 buttonRefresh.addClass("hidden");
                 button.text("Database connection succeeded");
             }
-       })
-       .fail(function(response){
-            button.removeClass("btn-default").addClass("btn-danger");
-            button.text("Database connection failed ").append(buttonRefresh);
-       })
+        }
+    });
 });
 
 /**

@@ -1,3 +1,5 @@
+# .DS_Store
+.DS_Store
 # IDEA
 .idea/*
 # Cache and logs (Symfony2)

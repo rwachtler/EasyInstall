@@ -9,11 +9,8 @@
 namespace AppBundle\Interfaces;
 
 
-interface EICms
+interface EIcms
 {
-    const name = "WordPress";
-    const versionURL = "http://api.wordpress.org/core/version-check/1.7/";
-
     public function getName();
 
     public function getVersion();

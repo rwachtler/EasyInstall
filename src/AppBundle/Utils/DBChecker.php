@@ -42,7 +42,11 @@ class DBChecker
 
     private function checkConnection($params){
         // TODO if no connection return false / if connection succeeded --> return true
+        $connection = new \mysqli('localhost', $params->user, $params->pass, $params->name);
 
-        return false;
+        if($connection->connect_error) {
+            return false;
+        }
+        return true;
     }
 }

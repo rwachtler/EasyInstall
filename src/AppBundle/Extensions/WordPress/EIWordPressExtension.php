@@ -9,10 +9,14 @@
 namespace AppBundle\Extensions\WordPress;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Interfaces\EICms;
+use AppBundle\Interfaces\EIcms;
 
-class EIWordPressExtension extends Controller implements EICms
+class EIwordPressExtension extends Controller implements EIcms
 {
+
+
+    const name = "WordPress";
+    const versionURL = "http://api.wordpress.org/core/version-check/1.7/";
 
     private $version, $url, $packages;
 
