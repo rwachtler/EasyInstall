@@ -17,6 +17,7 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         $session = $request->getSession();
+        $session->clear();
         if(!($session->has('db_exists'))){
             $this->setupDatabase($session);
             $session->set('db_exists',true);
