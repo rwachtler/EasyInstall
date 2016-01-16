@@ -99,6 +99,9 @@ a:focus {
   background: #674172;
   color: #ffffff;
 }
+select.form-control {
+  width: 30%;
+}
 img {
   max-width: 100%;
   height: auto;

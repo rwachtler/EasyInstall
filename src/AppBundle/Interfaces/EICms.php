@@ -18,4 +18,6 @@ interface EIcms
     public function getURL();
 
     public function getPackages();
+
+    public function getAvailableLanguages($version);
 }

@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>EasyInstall</title>
-    {% block stylesheet %}
     <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
-    {% endblock %}
+    <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 </head>
 <body>
 
@@ -39,10 +39,7 @@
 </main>
 <footer></footer>
 
-<script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-{% block scripts %}
-    <script src="{{ asset('js/main.js') }}"></script>
-{% endblock %}
+<script src="{{ asset('js/main.js') }}"></script>
+<script src="{{ asset('js/ui-helper.js') }}"></script>
 </body>
 </html>

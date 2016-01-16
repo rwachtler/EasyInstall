@@ -22,14 +22,13 @@ class EIwordPressController extends Controller
     public function indexAction(Request $request){
         $wordpressData = new EIwordPressExtension($this->container);
         $session = $request->getSession();
-        $dbPrefix = $session->get('dbPrefix');
         $dbName = $session->get('dbName');
         // TODO: Render the template for WordPress
         return $this->render('extensions/wordpress.html.twig', array(
             'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
             'wordpressData' => $wordpressData,
-            'dbPrefix' => $dbPrefix,
-            'dbName' => $dbName
+            'dbName' => $dbName,
+            'availableLanguages' => $wordpressData->getAvailableLanguages($wordpressData->getVersion())
         ));
 
     }

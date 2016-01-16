@@ -1,7 +1,7 @@
 $(document).ready(function(){
 });
 
-$("#check-database-connection").click(function(e){
+/*$("#check-database-connection").click(function(e){
     e.preventDefault();
     var button = $(this);
     var buttonRefresh = $(this).find("span").removeClass("hidden");
@@ -34,13 +34,5 @@ $("#check-database-connection").click(function(e){
             }
         }
     });
-});
+});*/
 
-/**
- * Next handler
- */
-$(".next").click(function(e){
-    e.preventDefault();
-    var targetOffset = $($(this).attr('href')).offset().top;
-    $("html, body").animate({scrollTop:targetOffset-50},600);
-});

@@ -46,4 +46,12 @@ class EIwordPressExtension extends Controller implements EIcms
     public function getPackages(){
         return $this->packages;
     }
+
+    public function getAvailableLanguages($selectedWPversion)
+    {
+        $req_url = "http://api.wordpress.org/translations/core/1.0/?version=".$selectedWPversion;
+        $availableLanguages = json_decode(file_get_contents($req_url))->translations;
+
+        return $availableLanguages;
+    }
 }

@@ -17,7 +17,7 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         $session = $request->getSession();
-        $session->clear();
+        //$session->clear();
         if(!($session->has('db_exists'))){
             $this->setupDatabase($session);
             $session->set('db_exists',true);
@@ -44,12 +44,9 @@ class DefaultController extends Controller
         if($connection->connect_error) {
             die("Connection failed: " . $connection->connect_error);
         }
-        $dbPrefix = $this->generateRandomString(4);
         $dbName = $this->generateRandomString(8);
-        $dbPxName = $dbPrefix.'_'.$dbName;
-        $session->set('dbPrefix', $dbPrefix);
         $session->set('dbName', $dbName);
-        $sql = "CREATE DATABASE ".$dbPxName;
+        $sql = "CREATE DATABASE ".$dbName;
         if ($connection->query($sql) === TRUE) {
             return "Database created successfully";
         } else {
@@ -59,6 +56,11 @@ class DefaultController extends Controller
         $connection->close();
     }
 
+    /**
+     * Generates random string (lowercase) with a defined length
+     * @param $length - string length
+     * @return string - generated string
+     */
     private function generateRandomString($length){
         $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
         $ret_string = '';

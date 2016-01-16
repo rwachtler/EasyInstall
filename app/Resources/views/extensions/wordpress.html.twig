@@ -8,18 +8,9 @@
     <div id="database-information" class="panel panel-default">
         <div class="panel-heading">
             <h3>Database setup</h3>
-            <p class="text-info">Setup a database with following values <span class="label label-info">The database name including the prefix - {{ dbPrefix }}_{{ dbName }}</span></p>
+            <p class="text-info">Setup a database with following values</p>
         </div>
         <div class="panel-body">
-            <div class="form-group">
-                <label class="col-xs-2" for="database-prefix">Table prefix</label>
-                <div class="col-xs-6">
-                    <input type="text" readonly class="form-control" id="database-prefix" value="{{ dbPrefix }}_" placeholder="wp_">
-                </div>
-                <p class="help-block">
-                    Useful when running multiple WordPress installations in a single database
-                </p>
-            </div>
             <div class="form-group">
                 <label class="col-xs-2" for="database-name">Database name</label>
                 <div class="col-xs-6">
@@ -32,7 +23,7 @@
         </div>
         <div class="panel-footer clearfix">
             <a href="#required-information" id="next-required-info" title="Next step" class="btn btn-primary pull-right next">Next step</a>
-            <button id="check-database-connection" title="Check database connection" class="btn btn-default pull-right">Check database connection <span class="glyphicon glyphicon-refresh hidden"></span></button>
+            <!--<button id="check-database-connection" title="Check database connection" class="btn btn-default pull-right">Check database connection <span class="glyphicon glyphicon-refresh hidden"></span></button>-->
         </div>
     </div>
     <div id="required-information" class="panel panel-default">
@@ -41,6 +32,18 @@
             <p class="text-info">This information can be changed later</p>
         </div>
         <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-2" for="site-language">Language</label>
+                <select class="form-control col-xs-3" name="site-language" id="site-language">
+                    <option value="en_US">English (United States)</option>
+                    {% for language in availableLanguages %}
+                        <option value="{{ language.language }}">{{ language.native_name }}</option>
+                    {% endfor %}
+                </select>
+                <p class="help-block">
+                    Select the site language
+                </p>
+            </div>
             <div class="form-group">
                 <label class="col-xs-2" for="site-title">Site title</label>
                 <div class="col-xs-6">
@@ -59,5 +62,9 @@
             <a href="#theme-settings" id="next-theme-settings" title="Next step" class="btn btn-primary pull-right next">Next step</a>
         </div>
     </div>
+        <button id="downloadPackage" type="submit">Download package</button>
 </form>
+    {% block scripts %}
+        <script src="{{ asset('js/wordpress.js') }}"></script>
+    {% endblock %}
 {% endblock %}
