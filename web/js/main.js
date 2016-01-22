@@ -1,38 +1,59 @@
 $(document).ready(function(){
 });
+var $dbCheckButton = $('#check-database-connection');
+var $dbRedoCheckButton = $dbCheckButton.find("span");
+var dbData = {
+    "name" : $("#database-name").val()
+};
+var $loadingOverlay = $('#loading-overlay');
 
-/*$("#check-database-connection").click(function(e){
+$dbCheckButton.click(function(e){
     e.preventDefault();
-    var button = $(this);
-    var buttonRefresh = $(this).find("span").removeClass("hidden");
-    var dbData = {
-        "name" : $("#database-name").val(),
-        "username" : $("database-username").val(),
-        "pass" : $("database-password").val(),
-        "prefix" : $("database-prefix").val()
-    };
+    $dbRedoCheckButton.removeClass("hidden");
+    checkDbConnection(dbData, showDatabaseButtonStatusSuccess, showDatabaseButtonStatusError);
 
+});
 
-    var asyncRequest = $.ajax({
+var checkDbConnection = function(dbData, successCallback, errorCallback){
+    $.ajax({
         url: "check-connection",
         type: 'POST',
         data: dbData,
         cache: false,
-        crossDomain: false,
         error: function() {
-            button.removeClass("btn-default").addClass("btn-danger");
-            button.text("Database connection failed ").append(buttonRefresh);
+            errorCallback();
         },
         success: function(response) {
-            if(response.status === "failure"){
-                button.removeClass("btn-default").addClass("btn-danger");
-                button.text("Database connection failed ").append(buttonRefresh);
-            } else if(response.status === "success"){
-                button.removeClass("btn-danger").removeClass("btn-default").addClass("btn-success");
-                buttonRefresh.addClass("hidden");
-                button.text("Database connection succeeded");
-            }
+            successCallback(response);
         }
     });
-});*/
+}
+
+var showDatabaseButtonStatusError = function(){
+    $dbCheckButton.removeClass("btn-default").addClass("btn-danger");
+    $dbCheckButton.text("Database connection failed ").append($dbRedoCheckButton);
+}
+
+var showDatabaseButtonStatusSuccess = function(response){
+    if(response.status === "failure"){
+        showDatabaseButtonStatusError();
+    } else if(response.status === "success"){
+        $dbCheckButton.removeClass("btn-danger").removeClass("btn-default").addClass("btn-success");
+        $dbCheckButton.text("Database connection succeeded").append($dbRedoCheckButton);
+    }
+}
+
+var showDatabaseConnectionErrorModal = function(){
+    $('#database-connection-error-modal').modal('show');
+}
+
+var showDatabaseConnectionSuccessPopup = function(response){
+    if(response.status === "failure"){
+        showDatabaseConnectionErrorModal();
+    } else if(response.status === "success"){
+        console.log("");
+    }
+}
+
+
 

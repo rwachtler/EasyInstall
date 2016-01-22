@@ -9,7 +9,11 @@
     <script src="{{ asset('bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 </head>
 <body>
-
+<div id="loading-overlay">
+    <div class="spinner">
+        <div class="inner-spinner"></div>
+    </div>
+</div>
 {% block header %}
 <header>
     <nav class="navbar navbar-default navbar-fixed-top">

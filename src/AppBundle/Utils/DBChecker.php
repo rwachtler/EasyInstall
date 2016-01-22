@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use AppBundle\EIconfig;
 
 class DBChecker
 {
@@ -22,27 +23,32 @@ class DBChecker
     public function asyncDBCheck(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
-            // TODO call checkConnection return a succeed JSON if true
             $databaseArgs = array(
-                'name' => $request->request->get('name'),
-                'user' => $request->request->get('username'),
-                'pass' => $request->request->get('pass'),
-                'prefix' => $request->request->get('prefix')
+                'name' => $request->request->get('name')
             );
             $connectionStatus = $this->checkConnection($databaseArgs);
+            $response = new JsonResponse();
+
             if($connectionStatus){
-                return new JsonResponse(array('action' => 'db_check', 'status' => 'success'));
+                $response->setData(array(
+                    'action' => 'db_check',
+                    'status' => 'success'
+                ));
             } else{
-                return new JsonResponse(array('action' => 'db_check', 'status' => 'failure'));
+                $response->setData(array(
+                    'action' => 'db_check',
+                    'status' => 'failure'
+                ));
             }
+
+            return $response;
         }
 
         return new Response('This is not ajax!', 400);
     }
 
     private function checkConnection($params){
-        // TODO if no connection return false / if connection succeeded --> return true
-        $connection = new \mysqli('localhost', $params->user, $params->pass, $params->name);
+        $connection = new \mysqli('localhost', EIconfig::$dbUser, EIconfig::$dbPass, $params['name']);
 
         if($connection->connect_error) {
             return false;

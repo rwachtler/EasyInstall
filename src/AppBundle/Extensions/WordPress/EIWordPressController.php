@@ -8,14 +8,17 @@
 
 namespace AppBundle\Extensions\WordPress;
 
+use AppBundle\EIconfig;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 class EIwordPressController extends Controller
 {
+
+
     /**
      * @Route("/wordpress", name="_wordpress")
      */
@@ -31,5 +34,35 @@ class EIwordPressController extends Controller
             'availableLanguages' => $wordpressData->getAvailableLanguages($wordpressData->getVersion())
         ));
 
+    }
+
+    /**
+     * @Route("/wp-download", name="_wp-download")
+     */
+    public function downloadWpAction(Request $request){
+        $wordpressData = new EIwordPressExtension($this->container);
+        if ($request->isXMLHttpRequest()) {
+            $params = array(
+                'siteLanguage' => $request->request->get('site-language')
+            );
+            $response = new JsonResponse();
+
+            if ( ! file_exists( EIconfig::$coreDirectoryPath . 'wordpress-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip' ) ) {
+                file_put_contents( EIconfig::$coreDirectoryPath . 'wordpress-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip', file_get_contents( $wordpressData->getFullPackageForLanguage($params['siteLanguage']) ) );
+                $response->setData(array(
+                    'action' => 'Download WordPress',
+                    'status' => 'success'
+                ));
+            } else{
+                $response->setData(array(
+                    'action' => 'Download WordPress',
+                    'status' => 'error'
+                ));
+            }
+
+            return $response;
+        }
+
+        return new Response('This is not ajax!', 400);
     }
 }

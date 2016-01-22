@@ -17,15 +17,15 @@ class EIwordPressExtension extends Controller implements EIcms
 
     const name = "WordPress";
     const versionURL = "http://api.wordpress.org/core/version-check/1.7/";
-
-    private $version, $url, $packages;
+    const versionURLlocale = "http://api.wordpress.org/core/version-check/1.7/?locale=";
+    private $version, $siteUrl, $packages;
 
     public function __construct($container = null){
-        $this->url = "http://wordpress.org";
+        $this->siteUrl = "http://wordpress.org";
         $this->container = $container;
-        $this->versionCheckData = $this->get("http")->performGetRequest(self::versionURL);
-        $this->version = $this->versionCheckData->offers[0]->version;
-        $this->packages = $this->versionCheckData->offers[0]->packages;
+        $versionCheckData = $this->get("http")->performGetRequest(self::versionURL);
+        $this->version = $versionCheckData->offers[0]->version;
+        $this->packages = $versionCheckData->offers[0]->packages;
     }
 
     public function getName()
@@ -38,9 +38,9 @@ class EIwordPressExtension extends Controller implements EIcms
          return $this->version;
     }
 
-    public function getURL()
+    public function getSiteUrl()
     {
-        return $this->url;
+        return $this->siteUrl;
     }
 
     public function getPackages(){
@@ -53,5 +53,19 @@ class EIwordPressExtension extends Controller implements EIcms
         $availableLanguages = json_decode(file_get_contents($req_url))->translations;
 
         return $availableLanguages;
+    }
+
+    public function getFullPackageForLanguage($language){
+        $wp = $this->get("http")->performGetRequest(self::versionURLlocale.$language);
+        $package = $wp->offers[0]->packages->full;
+
+        return $package;
+    }
+
+    public function getNoContentPackageForLanguage($language){
+        $wp = $this->get("http")->performGetRequest(self::versionURLlocale.$language);
+        $package = $wp->offers[0]->packages->no_content;
+
+        return $package;
     }
 }

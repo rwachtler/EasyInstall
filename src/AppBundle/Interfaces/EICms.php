@@ -15,7 +15,7 @@ interface EIcms
 
     public function getVersion();
 
-    public function getURL();
+    public function getSiteUrl();
 
     public function getPackages();
 

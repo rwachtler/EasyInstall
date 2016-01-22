@@ -4,7 +4,7 @@
 {% endblock %}
 {% block main %}
 <h1 class="text-center">WordPress {{ wordpressData.getVersion() }}</h1>
-<form class="form-horizontal">
+<form class="form-horizontal" id="base-settings">
     <div id="database-information" class="panel panel-default">
         <div class="panel-heading">
             <h3>Database setup</h3>
@@ -23,7 +23,7 @@
         </div>
         <div class="panel-footer clearfix">
             <a href="#required-information" id="next-required-info" title="Next step" class="btn btn-primary pull-right next">Next step</a>
-            <!--<button id="check-database-connection" title="Check database connection" class="btn btn-default pull-right">Check database connection <span class="glyphicon glyphicon-refresh hidden"></span></button>-->
+            <button id="check-database-connection" title="Check database connection" class="btn btn-default pull-right">Check database connection <span class="glyphicon glyphicon-refresh hidden"></span></button>
         </div>
     </div>
     <div id="required-information" class="panel panel-default">
@@ -47,7 +47,7 @@
             <div class="form-group">
                 <label class="col-xs-2" for="site-title">Site title</label>
                 <div class="col-xs-6">
-                    <input type="text" class="form-control" id="site-title" placeholder="My WordPress Site">
+                    <input type="text" name="site-title" class="form-control" id="site-title" placeholder="My WordPress Site" value="">
                 </div>
                 <p class="help-block">
                     Name your site
@@ -58,12 +58,30 @@
                     <input type="checkbox"> Clean install <span class="label label-info">No demo content is included</span>
                 </label>
             </div>
-        <div class="panel-footer clearfix">
-            <a href="#theme-settings" id="next-theme-settings" title="Next step" class="btn btn-primary pull-right next">Next step</a>
+            <div class="panel-footer clearfix">
+                <a href="#theme-settings" id="next-theme-settings" title="Next step" class="btn btn-primary pull-right next">Next step</a>
+            </div>
         </div>
-    </div>
         <button id="downloadPackage" type="submit">Download package</button>
+    </div>
 </form>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="database-connection-error-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Error</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Could not establish database connection. Check your configuration.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
     {% block scripts %}
         <script src="{{ asset('js/wordpress.js') }}"></script>
     {% endblock %}

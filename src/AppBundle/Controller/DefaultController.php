@@ -38,8 +38,7 @@ class DefaultController extends Controller
      * Setup database for user
      */
     private function setupDatabase($session){
-        $config = new EIconfig();
-        $connection = new \mysqli($config->dbHost, $config->dbUser, $config->dbPass);
+        $connection = new \mysqli(EIconfig::$dbHost, EIconfig::$dbUser, EIconfig::$dbPass);
 
         if($connection->connect_error) {
             die("Connection failed: " . $connection->connect_error);

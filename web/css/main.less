@@ -32,6 +32,55 @@ body{
   padding-top: 70px;
 }
 
+@keyframes bouncing-spinner-1 {
+  from {
+    transform:scale(1);
+  }
+  to {
+    transform:scale(0);
+  }
+}
+@keyframes bouncing-spinner-2 {
+  from {
+    transform:scale(0);
+  }
+  to {
+    transform:scale(2);
+  }
+}
+
+#loading-overlay{
+  display: none;
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+
+  div.spinner {
+    animation:bouncing-spinner-1 1s linear;
+    animation-iteration-count:infinite;
+    background:@honeyFlower;
+    border-radius:50%;
+    height:80px;
+    width:80px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    div.inner-spinner {
+      animation:bouncing-spinner-2 1s linear;
+      animation-iteration-count:infinite;
+      background:@whiteSmoke;
+      border-radius:50%;
+      height:80px;
+      width:80px
+    }
+  }
+}
+
 h1,h2,h3,h4,h5,h6{
   font-weight: normal;
 }
@@ -51,6 +100,10 @@ select.form-control{
 img {
   max-width: 100%;
   height: auto;
+}
+
+button#check-database-connection > span{
+  margin-left: 5px;
 }
 
 nav.navbar-default{
