@@ -43,12 +43,18 @@ class EIwordPressController extends Controller
         $wordpressData = new EIwordPressExtension($this->container);
         if ($request->isXMLHttpRequest()) {
             $params = array(
-                'siteLanguage' => $request->request->get('site-language')
+                'siteLanguage' => $request->request->get('site-language'),
+                'noContent' => $request->request->get('no-content')
             );
             $response = new JsonResponse();
 
-            if ( ! file_exists( EIconfig::$coreDirectoryPath . 'wordpress-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip' ) ) {
-                file_put_contents( EIconfig::$coreDirectoryPath . 'wordpress-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip', file_get_contents( $wordpressData->getFullPackageForLanguage($params['siteLanguage']) ) );
+            if ( ! file_exists( EIconfig::$coreDirectoryPath . 'wp-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip' ) ) {
+                if($params['noContent'] == 'on'){
+                    file_put_contents( EIconfig::$coreDirectoryPath . 'wp-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip', file_get_contents( $wordpressData->getNoContentPackageForLanguage($params['siteLanguage']) ) );
+
+                } else{
+                    file_put_contents( EIconfig::$coreDirectoryPath . 'wp-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip', file_get_contents( $wordpressData->getFullPackageForLanguage($params['siteLanguage']) ) );
+                }
                 $response->setData(array(
                     'action' => 'Download WordPress',
                     'status' => 'success'
@@ -65,4 +71,6 @@ class EIwordPressController extends Controller
 
         return new Response('This is not ajax!', 400);
     }
+
+    
 }

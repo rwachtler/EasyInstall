@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Utils\EIcmsHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +44,7 @@ class DefaultController extends Controller
         if($connection->connect_error) {
             die("Connection failed: " . $connection->connect_error);
         }
-        $dbName = $this->generateRandomString(8);
+        $dbName = EIcmsHelper::generateRandomString(8);
         $session->set('dbName', $dbName);
         $sql = "CREATE DATABASE ".$dbName;
         if ($connection->query($sql) === TRUE) {
@@ -55,18 +56,4 @@ class DefaultController extends Controller
         $connection->close();
     }
 
-    /**
-     * Generates random string (lowercase) with a defined length
-     * @param $length - string length
-     * @return string - generated string
-     */
-    private function generateRandomString($length){
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
-        $ret_string = '';
-        for ($i = 0; $i < $length; $i++) {
-            $ret_string .= $characters[mt_rand(0, strlen($characters) - 1)];
-        }
-
-        return $ret_string;
-    }
 }
