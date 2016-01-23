@@ -9,12 +9,16 @@ $("#downloadPackage").click(function(e){
     e.preventDefault();
     // Check database connection
     checkDbConnection(dbData, showDatabaseConnectionSuccessPopup, showDatabaseConnectionErrorModal);
-    // TODO: Serialize input data and download WordPress
+    // Serialize input data
     var serializedBaseSettings = serializeWordPressFormData('form#base-settings');
-    downloadWordPressPackage(serializedBaseSettings, unzipWordPressPackage);
-    // TODO: Unzip WordPress
-    // TODO: Configure WordPress
-    // TODO: Install WordPress
+    /**
+     *  Starts the whole installation process
+     *  1. Downloads a language specific WordPress package
+     *  2. Unzips the package
+     *  3. Configures WordPress (wp-config.php)
+     *  4. Installs WordPress
+     */
+    downloadWordPressPackage(serializedBaseSettings, configureWordPress);
     // TODO: Install Theme
     // TODO: Install Plugins
     // TODO: Content?
@@ -35,7 +39,14 @@ var serializeWordPressFormData = function(formIdentifier){
     return serializedDataObj;
 }
 
-var downloadWordPressPackage = function(language, unzipCallback){
+/**
+ * Performs an ajax request to the wp-download route
+ * which triggers the downloading of language specific
+ * WordPress package
+ * @param serializedSettings - Serialized WordPress settings object
+ * @param configWpCallback - WordPress configuration callback function
+ */
+var downloadWordPressPackage = function(serializedSettings, configWpCallback){
     console.log("Downloading...");
     $loadingOverlay.show('slow', function(){
         $loadingOverlay.animate(
@@ -47,7 +58,7 @@ var downloadWordPressPackage = function(language, unzipCallback){
     $.ajax({
         url: "wp-download",
         type: "POST",
-        data: language,
+        data: serializedSettings,
         cache: false,
         error: function(err) {
             $loadingOverlay.animate(
@@ -62,23 +73,46 @@ var downloadWordPressPackage = function(language, unzipCallback){
         },
         success: function(response) {
             if(response.status === "success"){
-                console.log("Downloaded!");
+                console.log("Downloaded & Unzipped!");
+                configWpCallback(serializedSettings);
+            }
+        }
+    });
+}
+
+var configureWordPress = function(settings){
+    console.log("Configuring and installing...");
+    $.ajax({
+        url: "wp-config",
+        type: "POST",
+        data: settings,
+        cache: false,
+        error: function(err) {
+            $loadingOverlay.animate(
+                {
+                    opacity : 0
+                },'slow',
+                function(){
+                    $loadingOverlay.hide('slow');
+                }
+            );
+            console.log(err)
+        },
+        success: function(response) {
+            if(response.status === "success"){
+                console.log("Configured and installed!");
+                console.log(response);
                 $loadingOverlay.animate(
                     {
                         opacity : 0
                     },'slow',
                     function(){
                         $loadingOverlay.hide('slow');
-                        unzipCallback();
                     }
                 );
             }
         }
     });
-}
-
-var unzipWordPressPackage = function(){
-    console.log("Unzipping...")
 }
 
 

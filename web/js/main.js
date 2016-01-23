@@ -50,9 +50,7 @@ var showDatabaseConnectionErrorModal = function(){
 var showDatabaseConnectionSuccessPopup = function(response){
     if(response.status === "failure"){
         showDatabaseConnectionErrorModal();
-    } else if(response.status === "success"){
-        console.log("");
-    }
+    } else if(response.status === "success"){}
 }
 
 

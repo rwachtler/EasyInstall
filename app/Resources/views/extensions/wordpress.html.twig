@@ -14,7 +14,7 @@
             <div class="form-group">
                 <label class="col-xs-2" for="database-name">Database name</label>
                 <div class="col-xs-6">
-                    <input type="text" readonly class="form-control" id="database-name" value="{{ dbName }}" placeholder="wordpress">
+                    <input type="text" name="database-name" readonly class="form-control" id="database-name" value="{{ dbName }}" placeholder="wordpress">
                 </div>
                 <p class="help-block">
                     Database name
@@ -46,16 +46,57 @@
             </div>
             <div class="form-group">
                 <label class="col-xs-2" for="site-title">Site title</label>
-                <div class="col-xs-6">
+                <div>
                     <input type="text" name="site-title" class="form-control" id="site-title" placeholder="My WordPress Site" value="">
                 </div>
                 <p class="help-block">
                     Name your site
                 </p>
             </div>
+            <div class="form-group">
+                <label class="col-xs-2" for="user-site-url">Site URL</label>
+                <div>
+                    <input type="url" name="user-site-url" class="form-control" id="user-site-url" placeholder="http://yoursite.com" value="">
+                </div>
+                <p class="help-block">
+                    Provide a URL for accessing your WordPress instance
+                </p>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2" for="username">Username</label>
+                <div>
+                    <input type="text" name="username" class="form-control" id="username" placeholder="John Doe" value="">
+                </div>
+                <p class="help-block">
+                    Usernames can have only alphanumeric characters, spaces, underscores, hyphens, periods and the @ symbol.
+                </p>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2" for="password">Password</label>
+                <div>
+                    <input type="password" name="password" class="form-control" id="password" value="">
+                </div>
+                <p class="help-block">
+                    The password should be at least seven characters long. To make it stronger, use upper and lower case letters, numbers and symbols like ! " ? $ % ^ & )
+                </p>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2" for="email">E-Mail</label>
+                <div>
+                    <input type="email" name="email" class="form-control" id="email" value="">
+                </div>
+                <p class="help-block">
+                    Double-check your email address before continuing.
+                </p>
+            </div>
             <div class="checkbox">
                 <label>
                     <input name="no-content" type="checkbox"> Clean install <span class="label label-info">No demo content is included</span>
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input name="privacy" type="checkbox"> Search engine visibility <span class="label label-info">Discourage search engines from indexing this site</span>
                 </label>
             </div>
             <div class="panel-footer clearfix">

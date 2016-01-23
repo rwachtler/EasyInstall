@@ -9,6 +9,8 @@
 namespace AppBundle\Utils;
 
 
+use AppBundle\EIconfig;
+
 class EIcmsHelper
 {
     /**
@@ -30,8 +32,12 @@ class EIcmsHelper
         $zip = new \ZipArchive();
 
         if($zip->open($dir)){
-            $zip->extractTo('wordpress/');
+            $zip->extractTo(EIconfig::$coreDirectoryPath);
             $zip->close();
+
+            return true;
         }
+
+        return false;
     }
 }
