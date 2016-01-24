@@ -4,7 +4,7 @@
 {% endblock %}
 {% block main %}
 <h1 class="text-center">WordPress {{ wordpressData.getVersion() }}</h1>
-<form class="form-horizontal" id="base-settings">
+<form class="form-horizontal" id="settings">
     <div id="database-information" class="panel panel-default">
         <div class="panel-heading">
             <h3>Database setup</h3>
@@ -91,7 +91,7 @@
             </div>
             <div class="checkbox">
                 <label>
-                    <input name="no-content" type="checkbox"> Clean install <span class="label label-info">No demo content is included</span>
+                    <input name="no-content" type="checkbox"> Clean install <span class="label label-info">No demo postings are included</span>
                 </label>
             </div>
             <div class="checkbox">
@@ -103,7 +103,26 @@
                 <a href="#theme-settings" id="next-theme-settings" title="Next step" class="btn btn-primary pull-right next">Next step</a>
             </div>
         </div>
-        <button id="downloadPackage" type="submit">Download package</button>
+    </div>
+    <div id="post-installation-settings" class="panel panel-default">
+        <div class="panel-heading">
+            <h3>Configuration</h3>
+            <p class="text-info">Upload your configuration file for theme, plugin and post insert</p>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-2" for="configuration-file">Configuration file</label>
+                <div class="col-xs-6">
+                    <input type="file" name="configuration-file" accept="application/json" class="form-control" id="configuration-file" >
+                </div>
+                <p class="help-block">
+                    Only <strong>.json</strong> files are accepted <button id="sample-config-file-download" class="btn-xs btn-primary">Download a sample</button>
+                </p>
+            </div>
+        </div>
+        <div class="panel-footer clearfix">
+            <button class="btn-primary btn-lg center-block" id="downloadPackage" type="submit">Download package</button>
+        </div>
     </div>
 </form>
 

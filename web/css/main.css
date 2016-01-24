@@ -27,6 +27,11 @@
  * Applies a transform operation to an element
  * @property string - represents a transform string (e.g. translate3d(x,y,z);)
  */
+/*
+ * Applies a linear gradient to an element
+ * @property startColor - from color
+ * @property endColor - to color
+ */
 /* Resets */
 .no-boxshadow {
   -webkit-box-shadow: none;
@@ -131,6 +136,15 @@ body {
 }
 .form-horizontal .form-group {
   margin: 0 0 15px 0;
+}
+.btn-primary {
+  background-color: #674172;
+  background: -webkit-gradient(linear, left top, left bottom, from(#674172), to(#583862));
+  background: -webkit-linear-gradient(top, #674172, #583862);
+  background: -moz-linear-gradient(top, #674172, #583862);
+  background: -ms-linear-gradient(top, #674172, #583862);
+  background: -o-linear-gradient(top, #674172, #583862);
+  border-color: #674172;
 }
 h1,
 h2,

@@ -8,10 +8,10 @@
 
 namespace AppBundle\Extensions\WordPress;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Interfaces\EIcms;
+use AppBundle\Utils\EIcmsHelper;
 
-class EIwordPressExtension extends Controller implements EIcms
+class EIwordPressExtension implements EIcms
 {
 
 
@@ -23,7 +23,7 @@ class EIwordPressExtension extends Controller implements EIcms
     public function __construct($container = null){
         $this->siteUrl = "http://wordpress.org";
         $this->container = $container;
-        $versionCheckData = $this->get("http")->performGetRequest(self::versionURL);
+        $versionCheckData = EIcmsHelper::performGetRequest(self::versionURL);
         $this->version = $versionCheckData->offers[0]->version;
         $this->packages = $versionCheckData->offers[0]->packages;
     }
@@ -56,15 +56,8 @@ class EIwordPressExtension extends Controller implements EIcms
     }
 
     public function getFullPackageForLanguage($language){
-        $wp = $this->get("http")->performGetRequest(self::versionURLlocale.$language);
+        $wp = EIcmsHelper::performGetRequest(self::versionURLlocale.$language);
         $package = $wp->offers[0]->packages->full;
-
-        return $package;
-    }
-
-    public function getNoContentPackageForLanguage($language){
-        $wp = $this->get("http")->performGetRequest(self::versionURLlocale.$language);
-        $package = $wp->offers[0]->packages->no_content;
 
         return $package;
     }

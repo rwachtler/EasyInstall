@@ -11,6 +11,7 @@ namespace AppBundle\Interfaces;
 
 interface EIcms
 {
+
     public function getName();
 
     public function getVersion();

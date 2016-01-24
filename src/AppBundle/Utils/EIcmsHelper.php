@@ -28,16 +28,27 @@ class EIcmsHelper
         return $ret_string;
     }
 
-    public static function unzipFile($dir){
+    public static function unzipFile($sourceDir, $destinationDir){
         $zip = new \ZipArchive();
 
-        if($zip->open($dir)){
-            $zip->extractTo(EIconfig::$coreDirectoryPath);
+        if($zip->open($sourceDir)){
+            $zip->extractTo($destinationDir);
             $zip->close();
-
+            unlink($sourceDir);
             return true;
         }
 
         return false;
+    }
+
+    public static function performGetRequest($url){
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        $response  = curl_exec($ch);
+
+        return json_decode($response);
     }
 }

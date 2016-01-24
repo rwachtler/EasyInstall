@@ -22,6 +22,11 @@
  * Applies a transform operation to an element
  * @property string - represents a transform string (e.g. translate3d(x,y,z);)
  */
+/*
+ * Applies a linear gradient to an element
+ * @property startColor - from color
+ * @property endColor - to color
+ */
 /* Resets */
 .no-boxshadow {
   -webkit-box-shadow: none;

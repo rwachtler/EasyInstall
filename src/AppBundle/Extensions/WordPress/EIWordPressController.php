@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class EIwordPressController extends Controller
 {
 
+    /** --- Routes --- */
 
     /**
      * @Route("/wordpress", name="_wordpress")
@@ -44,19 +45,16 @@ class EIwordPressController extends Controller
         $wordpressData = new EIwordPressExtension($this->container);
         if ($request->isXMLHttpRequest()) {
             $params = array(
-                'siteLanguage' => $request->request->get('site-language'),
-                'noContent' => $request->request->get('no-content')
+                'siteLanguage' => $request->request->get('site-language')
             );
             $response = new JsonResponse();
             $wpZipPackagePath = EIconfig::$coreDirectoryPath . 'wp-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip';
             if ( ! file_exists( $wpZipPackagePath ) ) {
-                if($params['noContent'] == 'on'){
-                    file_put_contents( $wpZipPackagePath, file_get_contents( $wordpressData->getNoContentPackageForLanguage($params['siteLanguage']) ) );
 
-                } else{
-                    file_put_contents( EIconfig::$coreDirectoryPath . 'wp-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip', file_get_contents( $wordpressData->getFullPackageForLanguage($params['siteLanguage']) ) );
-                }
-                if(EIcmsHelper::unzipFile($wpZipPackagePath)){
+                // Download package
+                file_put_contents( $wpZipPackagePath, file_get_contents( $wordpressData->getFullPackageForLanguage($params['siteLanguage']) ) );
+
+                if(EIcmsHelper::unzipFile($wpZipPackagePath, EIconfig::$coreDirectoryPath)){
                     $response->setData(array(
                         'action' => 'Download & Unzip WordPress',
                         'status' => 'success'
@@ -96,7 +94,8 @@ class EIwordPressController extends Controller
                 'username' => urldecode($request->request->get('username')),
                 'password' => $request->request->get('password'),
                 'email' => urldecode($request->request->get('email')),
-                'privacy' => (bool)(int)$request->request->get('privacy')
+                'privacy' => (bool)(int)$request->request->get('privacy'),
+                'noContent' => $request->request->get('no-content')
             );
 
             // Get the configuration file sample
@@ -166,7 +165,153 @@ class EIwordPressController extends Controller
     }
 
     /**
-     * @param $params - user inputs [siteTitle, siteLanguage, siteUrl, dbName, username, password, email, privacy]
+     * @Route("/wp-install-theme", name="_wp-install-theme")
+     */
+    public function installThemes(Request $request){
+        if ($request->isXMLHttpRequest()) {
+            $response = new JsonResponse();
+            // Load WordPress Admin Upgrade API
+            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php' );
+            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-admin/includes/upgrade.php' );
+
+            $themes = $request->request->get('user_themes');
+
+            // Create a temporary directory for the theme ZIPs
+            $tmp_dir_path = EIconfig::$coreDirectoryPath.'_tmp/';
+            mkdir($tmp_dir_path,0755);
+            /** Download theme ZIPs, unpack them inside the temporary directory
+                move the unpacked folders to /wordpress/wp-content/themes/
+             */
+            foreach($themes as $theme){
+                $theme = json_decode(json_encode($theme));
+                // Extract ZIP name from URL
+                $keys = parse_url($theme->url);
+                $urlPath = explode("/", $keys['path']);
+                $zipName = end($urlPath);
+                // Download ZIP
+                file_put_contents( $tmp_dir_path.$zipName, file_get_contents( $theme->url ) );
+                if(EIcmsHelper::unzipFile($tmp_dir_path.$zipName, $tmp_dir_path)){
+                    // Get theme directory name
+                    $themeDir = strtok($zipName,".");
+                    // Move theme directory to wordpress/wp-content/themes/
+                    rename($tmp_dir_path.$themeDir, EIconfig::$coreDirectoryPath.'wordpress/wp-content/themes/'.$themeDir);
+                    // Check if theme should be enabled
+                    if($theme->enable == "true"){
+                        switch_theme($themeDir, $themeDir);
+                    }
+                } else{
+                    $response->setData(array(
+                        'action' => 'Installing User Themes',
+                        'status' => 'error'
+                    ));
+                }
+            }
+            // Remove temporary directory
+            rmdir($tmp_dir_path);
+            $response->setData(array(
+                'action' => 'Installing User Themes',
+                'status' => 'success'
+            ));
+            return $response;
+        }
+
+        return new Response('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/wp-install-plugin", name="_wp-install-plugin")
+     */
+    public function installPlugins(Request $request){
+        if ($request->isXMLHttpRequest()) {
+            $response = new JsonResponse();
+            // Load WordPress Plugin API
+            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php' );
+            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-admin/includes/plugin.php' );
+
+            $plugins = $request->request->get('user_plugins');
+
+            // Create a temporary directory for the theme ZIPs
+            $tmp_dir_path = EIconfig::$coreDirectoryPath.'_tmp/';
+            mkdir($tmp_dir_path,0755);
+            /** Download plugin ZIPs, unpack them inside the temporary directory
+            move the unpacked folders to /wordpress/wp-content/plugins/ and activate if needed
+             */
+            foreach($plugins as $plugin){
+                $plugin = json_decode(json_encode($plugin));
+                // Extract ZIP name from URL
+                $keys = parse_url($plugin->url);
+                $urlPath = explode("/", $keys['path']);
+                $zipName = end($urlPath);
+                // Get theme directory name
+                $pluginDir = strtok($zipName,".");
+                // Download ZIP
+                file_put_contents( $tmp_dir_path.$zipName, file_get_contents( trim($plugin->url) ) );
+                if(EIcmsHelper::unzipFile($tmp_dir_path.$zipName, $tmp_dir_path)){
+                    // Move plugin directory to wordpress/wp-content/plugins/
+                    rename($tmp_dir_path.$pluginDir, EIconfig::$coreDirectoryPath.'wordpress/wp-content/plugins/' . $pluginDir);
+                }
+                else{
+                    $response->setData(array(
+                        'action' => 'Installing User Plugins',
+                        'status' => 'error'
+                    ));
+                }
+            }
+            // Remove temporary directory
+            rmdir($tmp_dir_path);
+            $response->setData(array(
+                'action' => 'Installing User Plugins',
+                'status' => 'success'
+            ));
+            return $response;
+        }
+
+        return new Response('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/wp-activate-plugin", name="_wp-activate-plugin")
+     */
+    public function activatePlugins(Request $request){
+        if($request->isXmlHttpRequest()) {
+            $response = new JsonResponse();
+            // Load WordPress Plugin API
+            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php');
+            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-admin/includes/plugin.php');
+
+            $plugins = $request->request->get('user_active_plugins');
+
+            foreach($plugins as $plugin){
+                $plugin = json_decode(json_encode($plugin));
+                if($plugin->enable == "true"){
+                    // Get keys from all existing plugins
+                    $allPluginKeys = array_keys(get_plugins());
+                    // Extract plugin name from URL
+                    $keys = parse_url($plugin->url);
+                    $urlPath = explode("/", $keys['path']);
+                    $pluginDir = strtok(end($urlPath), ".");
+
+                    foreach($allPluginKeys as $pluginPath){
+                        if(strpos($pluginPath, $pluginDir) !== false){
+                            activate_plugin($pluginPath);
+                        }
+                    }
+                }
+            }
+            $response->setData(array(
+                'action' => 'Activating User Plugins',
+                'status' => 'success'
+            ));
+            return $response;
+        }
+
+        return new Response('This is not ajax!', 400);
+    }
+
+    /** --- Private Methods --- */
+
+    /**
+     * @param $params - user inputs [siteTitle, siteLanguage, siteUrl, dbName, username, password, email, privacy, noContent]
      * @return array - execution status array
      */
     private function installWordPress($params){
@@ -182,6 +327,12 @@ class EIwordPressController extends Controller
         wp_install( $params['siteTitle'], $params['username'], $params['email'], $params['privacy'], '', $params['password'], $params['siteLanguage'] );
         update_option( 'siteurl', $params['siteUrl'] );
         update_option( 'home', $params['siteUrl'] );
+
+        if($params['noContent'] == 'on'){
+            wp_delete_post(1, true);
+            wp_delete_post(2, true);
+        }
+
         return array(
             'action' => 'Install WordPress',
             'status' => 'success'

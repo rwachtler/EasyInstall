@@ -49,6 +49,20 @@
   transform: @string;
 }
 
+/*
+ * Applies a linear gradient to an element
+ * @property startColor - from color
+ * @property endColor - to color
+ */
+.linear-gradient (@startColor: #CCC, @endColor: #FFF) {
+  background-color: @startColor;
+  background: -webkit-gradient(linear, left top, left bottom, from(@startColor), to(@endColor));
+  background: -webkit-linear-gradient(top, @startColor, @endColor);
+  background: -moz-linear-gradient(top, @startColor, @endColor);
+  background: -ms-linear-gradient(top, @startColor, @endColor);
+  background: -o-linear-gradient(top, @startColor, @endColor);
+}
+
 /* Resets */
 .no-boxshadow {
   -webkit-box-shadow: none;
