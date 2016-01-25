@@ -109,15 +109,7 @@ var configureWordPress = function(settings){
             if(response.status === "success"){
                 console.log("Configured and installed!");
                 if(userConfiguration === undefined){
-
-                    $loadingOverlay.animate(
-                        {
-                            opacity : 0
-                        },'slow',
-                        function(){
-                            $loadingOverlay.hide('slow');
-                        }
-                    );
+                    exportPackage();
                 } else{
                     if(!(userConfiguration.user_themes === undefined)){
                         installThemesFromConfig();
@@ -165,14 +157,7 @@ var installThemesFromConfig = function(){
                 if(!(userConfiguration.user_plugins === undefined)){
                     installPluginsFromConfig();
                 } else{
-                    $loadingOverlay.animate(
-                        {
-                            opacity : 0
-                        },'slow',
-                        function(){
-                            $loadingOverlay.hide('slow');
-                        }
-                    );
+                    exportPackage();
                 }
             }
         }
@@ -211,14 +196,7 @@ var installPluginsFromConfig = function(){
                 } else if(!(userConfiguration.user_posts === undefined)){
                     insertPosts();
                 } else{
-                    $loadingOverlay.animate(
-                        {
-                            opacity : 0
-                        },'slow',
-                        function(){
-                            $loadingOverlay.hide('slow');
-                        }
-                    );
+                    exportPackage();
                 }
             }
         }
@@ -254,20 +232,18 @@ var activatePluginsFromConfig = function(){
                 if(!(userConfiguration.user_posts === undefined)){
                     insertPosts();
                 } else{
-                    $loadingOverlay.animate(
-                        {
-                            opacity : 0
-                        },'slow',
-                        function(){
-                            $loadingOverlay.hide('slow');
-                        }
-                    );
+                    exportPackage();
                 }
             }
         }
     });
 }
 
+/**
+ * Performs an ajax request to the wp-insert-post route
+ * which triggers the inserting of posts/sites defined
+ * inside the ei-config.json
+ */
 var insertPosts = function(){
     console.log("Inserting posts...");
     $.ajax({
@@ -289,6 +265,32 @@ var insertPosts = function(){
         success: function(response) {
             if(response.status === "success"){
                 console.log("Posts inserted!");
+                exportPackage();
+            }
+        }
+    });
+}
+
+var exportPackage = function(){
+    console.log("Wrapping your package...");
+    $.ajax({
+        url: "wp-export-package",
+        type: "POST",
+        cache: false,
+        error: function(err) {
+            $loadingOverlay.animate(
+                {
+                    opacity : 0
+                },'slow',
+                function(){
+                    $loadingOverlay.hide('slow');
+                }
+            );
+            console.log(err)
+        },
+        success: function(response) {
+            if(response.status === "success"){
+                console.log("Here you go!");
                 $loadingOverlay.animate(
                     {
                         opacity : 0
@@ -302,8 +304,6 @@ var insertPosts = function(){
     });
 }
 
-
-// TODO: Fix console error if user selects nothing
 $('#configuration-file').change(function(){
     var file = $(this)[0].files[0];
     if(file !== 'undefined'){
