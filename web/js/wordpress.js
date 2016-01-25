@@ -23,6 +23,8 @@ $("#downloadPackage").click(function(e){
     downloadWordPressPackage(serializedBaseSettings, configureWordPress);
     // TODO: Content
     // TODO: Sample config file download
+    // TODO: Database dump
+    // TODO: ZIP the whole package and return to user as download
 });
 
 /**
@@ -81,6 +83,11 @@ var downloadWordPressPackage = function(serializedSettings, configWpCallback){
     });
 }
 
+/**
+ * Performs an ajax request to the wp-config route
+ * which triggers the configuring of WordPress (wp-config.php)
+ * @param settings - Serialized WordPress settings object
+ */
 var configureWordPress = function(settings){
     console.log("Configuring and installing...");
     $.ajax({
@@ -119,6 +126,11 @@ var configureWordPress = function(settings){
     });
 }
 
+/**
+ * Performs an ajax request to the wp-install-theme route
+ * which triggers the download and installation (optional activation)
+ * of WordPress Themes defined inside the ei-config.json
+ */
 var installWordPressThemesFromConfig = function(){
     console.log("Installing themes...");
     $.ajax({
@@ -146,6 +158,11 @@ var installWordPressThemesFromConfig = function(){
     });
 }
 
+/**
+ * Performs an ajax request to the wp-install-plugin route
+ * which triggers the download and installation of
+ * WordPress Plugins defined inside the ei-config.json
+ */
 var installWordPressPluginsFromConfig = function(){
     console.log("Installing plugins...");
     $.ajax({
@@ -167,6 +184,7 @@ var installWordPressPluginsFromConfig = function(){
         success: function(response) {
             if(response.status === "success"){
                 console.log("Plugins installed!");
+                // Check if there are WordPress Plugins to activate
                 if(getUserActivePlugins().user_active_plugins.length > 0){
                     activateWordPressPluginsFromConfig();
                 } else{
@@ -184,6 +202,11 @@ var installWordPressPluginsFromConfig = function(){
     });
 }
 
+/**
+ * Performs an ajax request to the wp-activate-plugin route
+ * which triggers the activation of
+ * WordPress Plugins defined inside the ei-config.json
+ */
 var activateWordPressPluginsFromConfig = function(){
     console.log("Activating plugins...");
     $.ajax({
@@ -221,25 +244,41 @@ var activateWordPressPluginsFromConfig = function(){
 // TODO: Fix console error if user selects nothing
 $('#configuration-file').change(function(){
     var file = $(this)[0].files[0];
-    var reader = new FileReader();
-    reader.onload = readerLoad;
-    reader.readAsText(file);
-
-
+    if(file !== 'undefined'){
+        var reader = new FileReader();
+        reader.onload = setUserConfiguration;
+        reader.readAsText(file);
+    }
 });
 
-var readerLoad = function(event){
+/**
+ * Sets the userConfiguration variable
+ * which contains the values from ei-config.json
+ * @param event - onload event
+ */
+var setUserConfiguration = function(event){
     userConfiguration = JSON.parse(event.target.result);
 }
 
+/**
+ * Returns user_themes values out of userConfiguration
+ * @returns {{user_themes: *}}
+ */
 var getUserThemes = function(){
     return {user_themes : userConfiguration.user_themes};
 }
-
+/**
+ * Returns user_plugins values out of userConfiguration
+ * @returns {{user_plugins: *}}
+ */
 var getUserPlugins = function(){
     return {user_plugins : userConfiguration.user_plugins};
 }
 
+/**
+ * Checks some of the user_plugins should be activated
+ * @returns {{user_active_plugins: Array}} - array of user_plugins to activate
+ */
 getUserActivePlugins = function(){
     var active_plugins = [];
     $(userConfiguration.user_plugins).each(function(){
@@ -250,6 +289,10 @@ getUserActivePlugins = function(){
     return {user_active_plugins : active_plugins};
 }
 
+/**
+ * Returns user_posts values out of userConfiguration
+ * @returns {{user_posts: *}}
+ */
 var getUserPosts = function(){
     return {user_posts : userConfiguration.user_posts};
 }
