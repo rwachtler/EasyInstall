@@ -308,6 +308,49 @@ class EIwordPressController extends Controller
         return new Response('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/wp-insert-post", name="_wp-insert-post")
+     */
+    public function insertPosts(Request $request){
+        if($request->isXmlHttpRequest()) {
+            $response = new JsonResponse();
+            // Load WordPress API
+            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php');
+
+            $posts = $request->request->get('user_posts');
+
+            foreach($posts as $post){
+                $post = json_decode(json_encode($post));
+                if ( isset( $post->title ) && !empty( $post->title ) ) {
+                    $parent = get_page_by_title( trim( $post->parent ) );
+                    $parent = $parent ? $parent->ID : 0;
+
+                    $args = array(
+                        'post_title' 		=> trim( $post->title ),
+                        'post_name'			=> $post->slug,
+                        'post_content'		=> trim( $post->content ),
+                        'post_status' 		=> $post->status,
+                        'post_type' 		=> $post->type,
+                        'post_parent'		=> $parent,
+                        'post_author'		=> 1,
+                        'post_date' 		=> date('Y-m-d H:i:s'),
+                        'post_date_gmt' 	=> gmdate('Y-m-d H:i:s'),
+                        'comment_status' 	=> 'closed',
+                        'ping_status'		=> 'closed'
+                    );
+                    wp_insert_post( $args );
+                }
+            }
+            $response->setData(array(
+                'action' => 'Inserting posts',
+                'status' => 'success'
+            ));
+            return $response;
+        }
+
+        return new Response('This is not ajax!', 400);
+    }
+
     /** --- Private Methods --- */
 
     /**

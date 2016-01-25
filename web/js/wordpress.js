@@ -21,10 +21,9 @@ $("#downloadPackage").click(function(e){
      *  6. Installs WordPress plugins defined inside ei-config.json (and activates if enable = true)
      */
     downloadWordPressPackage(serializedBaseSettings, configureWordPress);
-    // TODO: Content
-    // TODO: Sample config file download
     // TODO: Database dump
     // TODO: ZIP the whole package and return to user as download
+    // TODO: Sample config file download
 });
 
 /**
@@ -109,9 +108,8 @@ var configureWordPress = function(settings){
         success: function(response) {
             if(response.status === "success"){
                 console.log("Configured and installed!");
-                if(userConfiguration !== 'undefined'){
-                    installThemesFromConfig();
-                } else {
+                if(userConfiguration === undefined){
+
                     $loadingOverlay.animate(
                         {
                             opacity : 0
@@ -120,6 +118,18 @@ var configureWordPress = function(settings){
                             $loadingOverlay.hide('slow');
                         }
                     );
+                } else{
+                    if(!(userConfiguration.user_themes === undefined)){
+                        installThemesFromConfig();
+                    } else{
+                        if(!(userConfiguration.user_plugins === undefined)){
+                            installPluginsFromConfig();
+                        } else{
+                            if(!(userConfiguration.user_posts === undefined)){
+                                insertPosts();
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -152,7 +162,18 @@ var installThemesFromConfig = function(){
         success: function(response) {
             if(response.status === "success"){
                 console.log("Themes installed!");
-                installPluginsFromConfig();
+                if(!(userConfiguration.user_plugins === undefined)){
+                    installPluginsFromConfig();
+                } else{
+                    $loadingOverlay.animate(
+                        {
+                            opacity : 0
+                        },'slow',
+                        function(){
+                            $loadingOverlay.hide('slow');
+                        }
+                    );
+                }
             }
         }
     });
@@ -187,6 +208,8 @@ var installPluginsFromConfig = function(){
                 // Check if there are WordPress Plugins to activate
                 if(getUserActivePlugins().user_active_plugins.length > 0){
                     activatePluginsFromConfig();
+                } else if(!(userConfiguration.user_posts === undefined)){
+                    insertPosts();
                 } else{
                     $loadingOverlay.animate(
                         {
@@ -228,6 +251,44 @@ var activatePluginsFromConfig = function(){
         success: function(response) {
             if(response.status === "success"){
                 console.log("Plugins activated!");
+                if(!(userConfiguration.user_posts === undefined)){
+                    insertPosts();
+                } else{
+                    $loadingOverlay.animate(
+                        {
+                            opacity : 0
+                        },'slow',
+                        function(){
+                            $loadingOverlay.hide('slow');
+                        }
+                    );
+                }
+            }
+        }
+    });
+}
+
+var insertPosts = function(){
+    console.log("Inserting posts...");
+    $.ajax({
+        url: "wp-insert-post",
+        type: "POST",
+        data: getUserPosts(),
+        cache: false,
+        error: function(err) {
+            $loadingOverlay.animate(
+                {
+                    opacity : 0
+                },'slow',
+                function(){
+                    $loadingOverlay.hide('slow');
+                }
+            );
+            console.log(err)
+        },
+        success: function(response) {
+            if(response.status === "success"){
+                console.log("Posts inserted!");
                 $loadingOverlay.animate(
                     {
                         opacity : 0
