@@ -110,7 +110,7 @@ var configureWordPress = function(settings){
             if(response.status === "success"){
                 console.log("Configured and installed!");
                 if(userConfiguration !== 'undefined'){
-                    installWordPressThemesFromConfig();
+                    installThemesFromConfig();
                 } else {
                     $loadingOverlay.animate(
                         {
@@ -131,7 +131,7 @@ var configureWordPress = function(settings){
  * which triggers the download and installation (optional activation)
  * of WordPress Themes defined inside the ei-config.json
  */
-var installWordPressThemesFromConfig = function(){
+var installThemesFromConfig = function(){
     console.log("Installing themes...");
     $.ajax({
         url: "wp-install-theme",
@@ -152,7 +152,7 @@ var installWordPressThemesFromConfig = function(){
         success: function(response) {
             if(response.status === "success"){
                 console.log("Themes installed!");
-                installWordPressPluginsFromConfig();
+                installPluginsFromConfig();
             }
         }
     });
@@ -163,7 +163,7 @@ var installWordPressThemesFromConfig = function(){
  * which triggers the download and installation of
  * WordPress Plugins defined inside the ei-config.json
  */
-var installWordPressPluginsFromConfig = function(){
+var installPluginsFromConfig = function(){
     console.log("Installing plugins...");
     $.ajax({
         url: "wp-install-plugin",
@@ -186,7 +186,7 @@ var installWordPressPluginsFromConfig = function(){
                 console.log("Plugins installed!");
                 // Check if there are WordPress Plugins to activate
                 if(getUserActivePlugins().user_active_plugins.length > 0){
-                    activateWordPressPluginsFromConfig();
+                    activatePluginsFromConfig();
                 } else{
                     $loadingOverlay.animate(
                         {
@@ -207,7 +207,7 @@ var installWordPressPluginsFromConfig = function(){
  * which triggers the activation of
  * WordPress Plugins defined inside the ei-config.json
  */
-var activateWordPressPluginsFromConfig = function(){
+var activatePluginsFromConfig = function(){
     console.log("Activating plugins...");
     $.ajax({
         url: "wp-activate-plugin",
@@ -240,6 +240,7 @@ var activateWordPressPluginsFromConfig = function(){
         }
     });
 }
+
 
 // TODO: Fix console error if user selects nothing
 $('#configuration-file').change(function(){
