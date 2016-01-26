@@ -50,6 +50,16 @@ body{
   }
 }
 
+#status-layer{
+  z-index: 10000;
+  color: white;
+  position: fixed;
+  top: 65%;
+  display: none;
+  width: 100%;
+  text-align: center;
+}
+
 #loading-overlay{
   display: none;
   z-index: 9999;
@@ -69,7 +79,7 @@ body{
     height:80px;
     width:80px;
     position: absolute;
-    left: 50%;
+    left: calc(47.9%);
     top: 50%;
     div.inner-spinner {
       animation:bouncing-spinner-2 1s linear;

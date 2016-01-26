@@ -10,12 +10,16 @@ namespace AppBundle\Extensions\WordPress;
 
 use AppBundle\EIconfig;
 use AppBundle\Utils\EIcmsHelper;
+use AppBundle\Utils\MySQLDump;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
 class EIwordPressController extends Controller
 {
 
@@ -351,6 +355,55 @@ class EIwordPressController extends Controller
         return new Response('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("wp-export-package", name="_wp-export-package")
+     */
+    public function exportZipPackage(Request $request){
+
+        $session = $request->getSession();
+        $dbName = $session->get('dbName');
+        $folderPath = EIconfig::$coreDirectoryPath;
+
+        EIcmsHelper::createMySQLDump($folderPath, $dbName);
+
+        $zipName = EIcmsHelper::zipFolder($folderPath, "wp_".EIcmsHelper::generateRandomString(5));
+
+        $session->set('zipName', $zipName);
+
+        $pathToZipFile = $folderPath.$zipName;
+
+        $response = new BinaryFileResponse($pathToZipFile);
+
+        $response->headers->set('Content-Type', mime_content_type($pathToZipFile));
+        $response->headers->set('Content-Length', filesize($pathToZipFile));
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $zipName
+        );
+
+        return $response;
+    }
+
+    /**
+     * @Route("wp-cleanup", name="_wp-cleanup")
+     */
+    public function cleanup(Request $request){
+
+        $session = $request->getSession();
+        $response = new JsonResponse();
+
+        EIcmsHelper::deleteDatabase($session->get('dbName'));
+        EIcmsHelper::removeDir(EIconfig::$coreDirectoryPath.'wordpress');
+        unlink(EIconfig::$coreDirectoryPath.$session->get('zipName'));
+        unlink(EIconfig::$coreDirectoryPath.$session->get('dbName').'.sql');
+        $response->setData(array(
+            'action' => 'Cleaning up',
+            'status' => 'success'
+        ));
+
+        return $response;
+    }
+
     /** --- Private Methods --- */
 
     /**
@@ -381,4 +434,5 @@ class EIwordPressController extends Controller
             'status' => 'success'
         );
     }
+
 }

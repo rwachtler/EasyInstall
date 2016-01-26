@@ -5,24 +5,29 @@ $(document).ready(function(){
 
 });
 var userConfiguration;
+/**
+ *  Starts the whole installation process
+ *  0. Checks the connection to database
+ *  0.5 - Serializes input data
+ *  1. Downloads a language specific WordPress package
+ *  2. Unzips the package
+ *  3. Configures WordPress (wp-config.php)
+ *  4. Installs WordPress
+ *  5. Installs WordPress themes defined inside ei-config.json (and activates if enable = true)
+ *  6. Installs WordPress plugins defined inside ei-config.json (and activates if enable = true)
+ *  7. Inserts posts defined inside ei-config.json
+ *  8. Wraps the ZIP package for user
+ *  9. Delivers the package
+ *  10. Cleans up
+ */
 $("#downloadPackage").click(function(e){
     e.preventDefault();
+    $statusLayer.show('slow');
     // Check database connection
     checkDbConnection(dbData, showDatabaseConnectionSuccessPopup, showDatabaseConnectionErrorModal);
     // Serialize input data
     var serializedBaseSettings = serializeWordPressFormData('form#settings');
-    /**
-     *  Starts the whole installation process
-     *  1. Downloads a language specific WordPress package
-     *  2. Unzips the package
-     *  3. Configures WordPress (wp-config.php)
-     *  4. Installs WordPress
-     *  5. Installs WordPress themes defined inside ei-config.json (and activates if enable = true)
-     *  6. Installs WordPress plugins defined inside ei-config.json (and activates if enable = true)
-     */
     downloadWordPressPackage(serializedBaseSettings, configureWordPress);
-    // TODO: Database dump
-    // TODO: ZIP the whole package and return to user as download
     // TODO: Sample config file download
 });
 
@@ -32,12 +37,15 @@ $("#downloadPackage").click(function(e){
  * @returns {Array|jQuery} - array of serialized form values
  */
 var serializeWordPressFormData = function(formIdentifier){
+    console.log("Serializing input data...");
+    $statusLayer.text("Serializing input data");
     var serializedDataArr = $(formIdentifier).serialize().split("&");
     var serializedDataObj = {};
     serializedDataArr.forEach(function(value, index){
         var tmp = value.split("=");
         serializedDataObj[tmp[0]] = tmp[1];
     });
+    console.log("Serializing completed!")
     return serializedDataObj;
 }
 
@@ -50,6 +58,7 @@ var serializeWordPressFormData = function(formIdentifier){
  */
 var downloadWordPressPackage = function(serializedSettings, configWpCallback){
     console.log("Downloading...");
+    $statusLayer.text("Downloading WordPress package");
     $loadingOverlay.show('slow', function(){
         $loadingOverlay.animate(
             {
@@ -89,6 +98,7 @@ var downloadWordPressPackage = function(serializedSettings, configWpCallback){
  */
 var configureWordPress = function(settings){
     console.log("Configuring and installing...");
+    $statusLayer.text("Configuring WordPress");
     $.ajax({
         url: "wp-config",
         type: "POST",
@@ -135,6 +145,7 @@ var configureWordPress = function(settings){
  */
 var installThemesFromConfig = function(){
     console.log("Installing themes...");
+    $statusLayer.text("Installing themes");
     $.ajax({
         url: "wp-install-theme",
         type: "POST",
@@ -171,6 +182,7 @@ var installThemesFromConfig = function(){
  */
 var installPluginsFromConfig = function(){
     console.log("Installing plugins...");
+    $statusLayer.text("Installing plugins");
     $.ajax({
         url: "wp-install-plugin",
         type: "POST",
@@ -210,6 +222,7 @@ var installPluginsFromConfig = function(){
  */
 var activatePluginsFromConfig = function(){
     console.log("Activating plugins...");
+    $statusLayer.text("Activating plugins");
     $.ajax({
         url: "wp-activate-plugin",
         type: "POST",
@@ -246,6 +259,7 @@ var activatePluginsFromConfig = function(){
  */
 var insertPosts = function(){
     console.log("Inserting posts...");
+    $statusLayer.text("Inserting posts");
     $.ajax({
         url: "wp-insert-post",
         type: "POST",
@@ -273,32 +287,33 @@ var insertPosts = function(){
 
 var exportPackage = function(){
     console.log("Wrapping your package...");
+    $statusLayer.text("Wrapping your ZIP package");
+    window.location.href = "wp-export-package";
+    console.log("Here you go!");
+    $loadingOverlay.animate(
+        {
+            opacity : 0
+        },'slow',
+        function(){
+            $statusLayer.hide('slow');
+            $loadingOverlay.hide('slow');
+            cleanUp();
+        }
+    );
+}
+
+var cleanUp = function(){
+    console.log("Cleaning up...");
     $.ajax({
-        url: "wp-export-package",
+        url: "wp-cleanup",
         type: "POST",
         cache: false,
         error: function(err) {
-            $loadingOverlay.animate(
-                {
-                    opacity : 0
-                },'slow',
-                function(){
-                    $loadingOverlay.hide('slow');
-                }
-            );
             console.log(err)
         },
         success: function(response) {
             if(response.status === "success"){
-                console.log("Here you go!");
-                $loadingOverlay.animate(
-                    {
-                        opacity : 0
-                    },'slow',
-                    function(){
-                        $loadingOverlay.hide('slow');
-                    }
-                );
+                console.log("Cleaned up!");
             }
         }
     });

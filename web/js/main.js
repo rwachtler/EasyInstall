@@ -2,6 +2,7 @@ $(document).ready(function(){
 });
 var $dbCheckButton = $('#check-database-connection');
 var $dbRedoCheckButton = $dbCheckButton.find("span");
+var $statusLayer = $('#status-layer');
 var dbData = {
     "name" : $("#database-name").val()
 };
@@ -15,6 +16,8 @@ $dbCheckButton.click(function(e){
 });
 
 var checkDbConnection = function(dbData, successCallback, errorCallback){
+    console.log("Checking database connection...");
+    $statusLayer.text("Checking database connection");
     $.ajax({
         url: "check-connection",
         type: 'POST',
@@ -24,6 +27,7 @@ var checkDbConnection = function(dbData, successCallback, errorCallback){
             errorCallback();
         },
         success: function(response) {
+            console.log("Database connection established!");
             successCallback(response);
         }
     });
