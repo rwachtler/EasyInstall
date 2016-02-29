@@ -17,6 +17,23 @@ EasyInstall
  - `c:\> move symfony c:\projects`
  - `c:\projects\> php symfony`
 
+##### Create a config file
+
+- Create a file named `EIconfig.php` in `EasyInstall/src/AppBundle/
+- Insert following information into it
+- 
+
+    <?php
+        namespace AppBundle;
+        
+        class EIconfig
+        {
+            public static $dbHost = 'YOUR_DB_HOST';
+            public static $dbUser = 'YOUR_DB_USER';
+            public static $dbPass = 'YOUR_DB_PASS';
+            public static $coreDirectoryPath = 'PATH_WHERE_TMP_USERFOLDERS_WILL_BE_PLACED';
+        }
+
 ##### Run the app
 
 - `cd my_project_name/`
