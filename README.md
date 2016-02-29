@@ -21,7 +21,7 @@ EasyInstall
 
 - `cd my_project_name/`
 - `php app/console server:run` (try `php bin/console server:run` if something went wrong)
-- Go to http://localhost:8000
+- Go to [http://localhost:8000](http://localhost:8000)
 
 #### `ei-config.json` sample
 
