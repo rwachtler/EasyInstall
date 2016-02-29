@@ -3,6 +3,26 @@ EasyInstall
 
 *A Symfony project created on November 12, 2015, 7:48 am.*
 
+#### How to run this application locally
+
+##### Install Symfony
+
+- **OS X / Linux** (see [Symfony Documentation](http://symfony.com/doc/current/book/installation.html#linux-and-mac-os-x-systems))
+ - `sudo curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony`
+ - `sudo chmod a+x /usr/local/bin/symfony`
+
+
+- **Windows** (see [Symfony Documentation](http://symfony.com/doc/current/book/installation.html#windows-systems))
+ - `c:\> php -r "readfile('https://symfony.com/installer');" > symfony`
+ - `c:\> move symfony c:\projects`
+ - `c:\projects\> php symfony`
+
+##### Run the app
+
+- `cd my_project_name/`
+- `php app/console server:run` (try `php bin/console server:run` if something went wrong)
+- Go to http://localhost:8000
+
 #### `ei-config.json` sample
 
     {
