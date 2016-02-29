@@ -155,6 +155,15 @@ body {
   background: -o-linear-gradient(top, #674172, #583862);
   border-color: #674172;
 }
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #674172;
+  background: -webkit-gradient(linear, left top, left bottom, from(#674172), to(#4a2e52));
+  background: -webkit-linear-gradient(top, #674172, #4a2e52);
+  background: -moz-linear-gradient(top, #674172, #4a2e52);
+  background: -ms-linear-gradient(top, #674172, #4a2e52);
+  background: -o-linear-gradient(top, #674172, #4a2e52);
+}
 h1,
 h2,
 h3,
@@ -174,9 +183,15 @@ a:focus {
 select.form-control {
   width: 30%;
 }
+select#site-language {
+  margin: 0 15px 0 0;
+}
 img {
   max-width: 100%;
   height: auto;
+}
+button#check-database-connection {
+  margin-right: 10px;
 }
 button#check-database-connection > span {
   margin-left: 5px;
@@ -195,4 +210,8 @@ nav.navbar-default a.navbar-brand:focus {
 nav.navbar-default p.navbar-text {
   padding: 0 15px;
   color: #ffffff;
+}
+main div#cms-select {
+  margin-top: 20%;
+  text-align: center;
 }

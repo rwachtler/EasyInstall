@@ -21,6 +21,7 @@ class DefaultController extends Controller
         //$session->clear();
         if(!($session->has('db_exists'))){
             $this->setupDatabase($session);
+            $this->setupUserFolder($session);
             $session->set('db_exists',true);
         }
         // Acts as a container for available systems
@@ -54,6 +55,16 @@ class DefaultController extends Controller
         }
 
         $connection->close();
+    }
+
+    /**
+     * Setup user folder
+     */
+    private function setupUserFolder($session){
+        $dirName = EIcmsHelper::generateRandomString(8) . '_' . time() . '/';
+        $dirPath = EIconfig::$coreDirectoryPath . $dirName;
+        mkdir($dirPath, 0755);
+        $session->set('user_folder', $dirName);
     }
 
 }

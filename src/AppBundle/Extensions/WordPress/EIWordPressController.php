@@ -32,7 +32,6 @@ class EIwordPressController extends Controller
         $wordpressData = new EIwordPressExtension($this->container);
         $session = $request->getSession();
         $dbName = $session->get('dbName');
-        // TODO: Render the template for WordPress
         return $this->render('extensions/wordpress.html.twig', array(
             'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
             'wordpressData' => $wordpressData,
@@ -46,19 +45,21 @@ class EIwordPressController extends Controller
      * @Route("/wp-download", name="_wp-download")
      */
     public function downloadWpAction(Request $request){
+        $session = $request->getSession();
+        $userDir = $session->get('user_folder');
         $wordpressData = new EIwordPressExtension($this->container);
         if ($request->isXMLHttpRequest()) {
             $params = array(
                 'siteLanguage' => $request->request->get('site-language')
             );
             $response = new JsonResponse();
-            $wpZipPackagePath = EIconfig::$coreDirectoryPath . 'wp-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip';
+            $wpZipPackagePath = EIconfig::$coreDirectoryPath . $userDir . 'wp-' . $wordpressData->getVersion() . '-' . $params['siteLanguage']  . '.zip';
             if ( ! file_exists( $wpZipPackagePath ) ) {
 
                 // Download package
                 file_put_contents( $wpZipPackagePath, file_get_contents( $wordpressData->getFullPackageForLanguage($params['siteLanguage']) ) );
 
-                if(EIcmsHelper::unzipFile($wpZipPackagePath, EIconfig::$coreDirectoryPath)){
+                if(EIcmsHelper::unzipFile($wpZipPackagePath, EIconfig::$coreDirectoryPath . $userDir)){
                     $response->setData(array(
                         'action' => 'Download & Unzip WordPress',
                         'status' => 'success'
@@ -87,6 +88,8 @@ class EIwordPressController extends Controller
      * @Route("/wp-config", name="_wp-config")
      */
     public function configureWordPress(Request $request){
+        $session = $request->getSession();
+        $userDir = $session->get('user_folder');
         $response = new JsonResponse();
         if($request->isXmlHttpRequest()){
 
@@ -103,7 +106,7 @@ class EIwordPressController extends Controller
             );
 
             // Get the configuration file sample
-            $configFile = file(EIconfig::$coreDirectoryPath . 'wordpress/wp-config-sample.php');
+            $configFile = file(EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-config-sample.php');
 
             // Get WP-Security keys
             $securityKeys = explode( "\n", file_get_contents( 'https://api.wordpress.org/secret-key/1.1/salt/' ) );
@@ -151,16 +154,16 @@ class EIwordPressController extends Controller
                 }
             }
             unset( $line );
-            $handle = fopen( EIconfig::$coreDirectoryPath . 'wordpress/wp-config.php', 'w' );
+            $handle = fopen( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-config.php', 'w' );
             foreach ( $configFile as $line ) {
                 fwrite( $handle, $line );
             }
             fclose( $handle );
 
             // Set rights
-            chmod( EIconfig::$coreDirectoryPath . 'wordpress/wp-config.php', 0666 );
+            chmod( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-config.php', 0666 );
 
-            $response->setData($this->installWordPress($params));
+            $response->setData($this->installWordPress($params, $userDir));
 
             return $response;
         }
@@ -173,15 +176,17 @@ class EIwordPressController extends Controller
      */
     public function installThemes(Request $request){
         if ($request->isXMLHttpRequest()) {
+            $session = $request->getSession();
+            $userDir = $session->get('user_folder');
             $response = new JsonResponse();
             // Load WordPress Admin Upgrade API
-            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php' );
-            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-admin/includes/upgrade.php' );
+            require_once( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-load.php' );
+            require_once( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-admin/includes/upgrade.php' );
 
             $themes = $request->request->get('user_themes');
 
             // Create a temporary directory for the theme ZIPs
-            $tmp_dir_path = EIconfig::$coreDirectoryPath.'_tmp/';
+            $tmp_dir_path = EIconfig::$coreDirectoryPath . $userDir . '_tmp/';
             mkdir($tmp_dir_path,0755);
             /** Download theme ZIPs, unpack them inside the temporary directory
                 move the unpacked folders to /wordpress/wp-content/themes/
@@ -198,7 +203,7 @@ class EIwordPressController extends Controller
                     // Get theme directory name
                     $themeDir = strtok($zipName,".");
                     // Move theme directory to wordpress/wp-content/themes/
-                    rename($tmp_dir_path.$themeDir, EIconfig::$coreDirectoryPath.'wordpress/wp-content/themes/'.$themeDir);
+                    rename($tmp_dir_path.$themeDir, EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-content/themes/'.$themeDir);
                     // Check if theme should be enabled
                     if($theme->enable == "true"){
                         switch_theme($themeDir, $themeDir);
@@ -227,15 +232,17 @@ class EIwordPressController extends Controller
      */
     public function installPlugins(Request $request){
         if ($request->isXMLHttpRequest()) {
+            $session = $request->getSession();
+            $userDir = $session->get('user_folder');
             $response = new JsonResponse();
             // Load WordPress Plugin API
-            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php' );
-            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-admin/includes/plugin.php' );
+            require_once( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-load.php' );
+            require_once( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-admin/includes/plugin.php' );
 
             $plugins = $request->request->get('user_plugins');
 
             // Create a temporary directory for the theme ZIPs
-            $tmp_dir_path = EIconfig::$coreDirectoryPath.'_tmp/';
+            $tmp_dir_path = EIconfig::$coreDirectoryPath . $userDir . '_tmp/';
             mkdir($tmp_dir_path,0755);
             /** Download plugin ZIPs, unpack them inside the temporary directory
             move the unpacked folders to /wordpress/wp-content/plugins/ and activate if needed
@@ -252,7 +259,7 @@ class EIwordPressController extends Controller
                 file_put_contents( $tmp_dir_path.$zipName, file_get_contents( trim($plugin->url) ) );
                 if(EIcmsHelper::unzipFile($tmp_dir_path.$zipName, $tmp_dir_path)){
                     // Move plugin directory to wordpress/wp-content/plugins/
-                    rename($tmp_dir_path.$pluginDir, EIconfig::$coreDirectoryPath.'wordpress/wp-content/plugins/' . $pluginDir);
+                    rename($tmp_dir_path.$pluginDir, EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-content/plugins/' . $pluginDir);
                 }
                 else{
                     $response->setData(array(
@@ -278,10 +285,12 @@ class EIwordPressController extends Controller
      */
     public function activatePlugins(Request $request){
         if($request->isXmlHttpRequest()) {
+            $session = $request->getSession();
+            $userDir = $session->get('user_folder');
             $response = new JsonResponse();
             // Load WordPress Plugin API
-            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php');
-            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-admin/includes/plugin.php');
+            require_once( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-load.php');
+            require_once( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-admin/includes/plugin.php');
 
             $plugins = $request->request->get('user_active_plugins');
 
@@ -317,9 +326,11 @@ class EIwordPressController extends Controller
      */
     public function insertPosts(Request $request){
         if($request->isXmlHttpRequest()) {
+            $session = $request->getSession();
+            $userDir = $session->get('user_folder');
             $response = new JsonResponse();
             // Load WordPress API
-            require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php');
+            require_once( EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-load.php');
 
             $posts = $request->request->get('user_posts');
 
@@ -355,6 +366,37 @@ class EIwordPressController extends Controller
         return new Response('This is not ajax!', 400);
     }
 
+
+    /**
+     * @Route("wp-prepare-package", name="_wp-prepare-package")
+     */
+    public function prepareZipPackage(Request $request) {
+
+        $response = new JsonResponse();
+
+        $session = $request->getSession();
+        $userDir = $session->get('user_folder');
+
+        $dbUser = $request->request->get('database-username');
+        $dbPass = $request->request->get('database-password');
+        $dbHost = $request->request->get('database-host');
+
+        // Get the configuration file and replace the values
+        $configFile = file_get_contents(EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-config.php');
+
+        $configFile = str_replace("define('DB_USER', '" . EIconfig::$dbUser . "');" ,"define('DB_USER', '" . $dbUser . "');", $configFile);
+        $configFile = str_replace("define('DB_PASSWORD', '" . EIconfig::$dbPass . "');" ,"define('DB_PASSWORD', '" . $dbPass . "');", $configFile);
+        $configFile = str_replace("define('DB_HOST', '" . EIconfig::$dbHost . "');" ,"define('DB_HOST', '" . $dbHost . "');", $configFile);
+
+        file_put_contents(EIconfig::$coreDirectoryPath . $userDir . 'wordpress/wp-config.php', $configFile);
+
+        $response->setData(array(
+            'action' => 'Preparing package',
+            'status' => 'success'
+        ));
+        return $response;
+    }
+
     /**
      * @Route("wp-export-package", name="_wp-export-package")
      */
@@ -362,7 +404,9 @@ class EIwordPressController extends Controller
 
         $session = $request->getSession();
         $dbName = $session->get('dbName');
-        $folderPath = EIconfig::$coreDirectoryPath;
+        $userDir = $session->get('user_folder');
+
+        $folderPath = EIconfig::$coreDirectoryPath . $userDir;
 
         EIcmsHelper::createMySQLDump($folderPath, $dbName);
 
@@ -390,12 +434,12 @@ class EIwordPressController extends Controller
     public function cleanup(Request $request){
 
         $session = $request->getSession();
+        $userDir = $session->get('user_folder');
         $response = new JsonResponse();
 
         EIcmsHelper::deleteDatabase($session->get('dbName'));
-        EIcmsHelper::removeDir(EIconfig::$coreDirectoryPath.'wordpress');
-        unlink(EIconfig::$coreDirectoryPath.$session->get('zipName'));
-        unlink(EIconfig::$coreDirectoryPath.$session->get('dbName').'.sql');
+        EIcmsHelper::removeDir(EIconfig::$coreDirectoryPath. $userDir);
+
         $response->setData(array(
             'action' => 'Cleaning up',
             'status' => 'success'
@@ -410,14 +454,16 @@ class EIwordPressController extends Controller
      * @param $params - user inputs [siteTitle, siteLanguage, siteUrl, dbName, username, password, email, privacy, noContent]
      * @return array - execution status array
      */
-    private function installWordPress($params){
+    private function installWordPress($params, $userDir){
 
         define( 'WP_INSTALLING', true );
 
+
+
         /** Load WordPress installation files */
-        require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-load.php' );
-        require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-admin/includes/upgrade.php' );
-        require_once( EIconfig::$coreDirectoryPath . 'wordpress/wp-includes/wp-db.php' );
+        require_once( EIconfig::$coreDirectoryPath  . $userDir .  'wordpress/wp-load.php' );
+        require_once( EIconfig::$coreDirectoryPath  . $userDir .  'wordpress/wp-admin/includes/upgrade.php' );
+        require_once( EIconfig::$coreDirectoryPath  . $userDir .  'wordpress/wp-includes/wp-db.php' );
 
         /** Install WordPress */
         wp_install( $params['siteTitle'], $params['username'], $params['email'], $params['privacy'], '', $params['password'], $params['siteLanguage'] );

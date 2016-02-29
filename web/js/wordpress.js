@@ -28,7 +28,6 @@ $("#downloadPackage").click(function(e){
     // Serialize input data
     var serializedBaseSettings = serializeWordPressFormData('form#settings');
     downloadWordPressPackage(serializedBaseSettings, configureWordPress);
-    // TODO: Sample config file download
 });
 
 /**
@@ -288,18 +287,40 @@ var insertPosts = function(){
 var exportPackage = function(){
     console.log("Wrapping your package...");
     $statusLayer.text("Wrapping your ZIP package");
-    window.location.href = "wp-export-package";
-    console.log("Here you go!");
-    $loadingOverlay.animate(
-        {
-            opacity : 0
-        },'slow',
-        function(){
-            $statusLayer.hide('slow');
-            $loadingOverlay.hide('slow');
-            cleanUp();
+    var serializedBaseSettings = serializeWordPressFormData('form#settings');
+    $.ajax({
+        url: "wp-prepare-package",
+        type: "POST",
+        data: serializedBaseSettings,
+        cache: false,
+        error: function(err) {
+            $loadingOverlay.animate(
+                {
+                    opacity : 0
+                },'slow',
+                function(){
+                    $loadingOverlay.hide('slow');
+                }
+            );
+            console.log(err)
+        },
+        success: function(response) {
+            if(response.status === "success"){
+                window.location.href = "wp-export-package";
+                console.log("Here you go!");
+                $loadingOverlay.animate(
+                    {
+                        opacity : 0
+                    },'slow',
+                    function(){
+                        $statusLayer.hide('slow');
+                        $loadingOverlay.hide('slow');
+                        cleanUp();
+                    }
+                );
+            }
         }
-    );
+    });
 }
 
 var cleanUp = function(){

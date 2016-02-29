@@ -8,22 +8,52 @@
     <div id="database-information" class="panel panel-default">
         <div class="panel-heading">
             <h3>Database setup</h3>
-            <p class="text-info">Setup a database with following values</p>
+            <p class="text-info">Setup your database information</p>
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label class="col-xs-2" for="database-name">Database name</label>
-                <div class="col-xs-6">
-                    <input type="text" name="database-name" readonly class="form-control" id="database-name" value="{{ dbName }}" placeholder="wordpress">
+                <div class="row">
+                    <label class="col-xs-2" for="database-name">Database name</label>
+                    <div class="col-xs-6">
+                        <input type="text" name="database-name" readonly class="form-control" id="database-name" value="{{ dbName }}" placeholder="wordpress">
+                    </div>
+                    <p class="help-block">
+                        You have to setup a database with the provided name
+                    </p>
                 </div>
-                <p class="help-block">
-                    Database name
-                </p>
+                <div class="row">
+                    <label for="database-username" class="col-xs-2">Database username</label>
+                    <div class="col-xs-6">
+                        <input type="text" name="database-username" class="form-control" id="database-username" placeholder="root">
+                    </div>
+                    <p class="help-block">
+                        Your database username
+                    </p>
+                </div>
+                <div class="row">
+                    <label for="database-password" class="col-xs-2">Database password</label>
+                    <div class="col-xs-6">
+                        <input type="password" name="database-password" class="form-control" id="database-password" placeholder="password">
+                    </div>
+                    <p class="help-block">
+                        Your database password
+                    </p>
+                </div>
+                <div class="row">
+                    <label for="database-host" class="col-xs-2">Database host</label>
+                    <div class="col-xs-6">
+                        <input type="url" name="database-host" class="form-control" id="database-host" placeholder="http://yourhost.com/wordpress/">
+                    </div>
+                    <p class="help-block">
+                        Your database host (URL)
+                    </p>
+                </div>
+
             </div>
         </div>
         <div class="panel-footer clearfix">
             <a href="#required-information" id="next-required-info" title="Next step" class="btn btn-primary pull-right next">Next step</a>
-            <button id="check-database-connection" title="Check database connection" class="btn btn-default pull-right" type="button">Check database connection <span class="glyphicon glyphicon-refresh hidden"></span></button>
+            <button id="check-database-connection" title="Check database connection" class="btn btn-default pull-right" type="button">Check remote database connection <span class="glyphicon glyphicon-refresh hidden"></span></button>
         </div>
     </div>
     <div id="required-information" class="panel panel-default">
@@ -99,9 +129,9 @@
                     <input name="privacy" type="checkbox"> Search engine visibility <span class="label label-info">Discourage search engines from indexing this site</span>
                 </label>
             </div>
-            <div class="panel-footer clearfix">
-                <a href="#post-installation-settings" id="next-post-installation-settings" title="Next step" class="btn btn-primary pull-right next">Next step</a>
-            </div>
+        </div>
+        <div class="panel-footer clearfix">
+            <a href="#post-installation-settings" id="next-post-installation-settings" title="Next step" class="btn btn-primary pull-right next">Next step</a>
         </div>
     </div>
     <div id="post-installation-settings" class="panel panel-default">
