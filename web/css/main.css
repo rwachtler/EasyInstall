@@ -180,6 +180,13 @@ a:focus {
   background: #674172;
   color: #ffffff;
 }
+a.btn-primary {
+  padding: 5px 10px;
+}
+a.btn-primary:hover,
+a.btn-primary:focus {
+  text-decoration: none;
+}
 select.form-control {
   width: 30%;
 }

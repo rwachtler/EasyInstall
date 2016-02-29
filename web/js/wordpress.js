@@ -2,7 +2,47 @@
  * Created by rwachtler on 16.01.16.
  */
 $(document).ready(function(){
-
+    var obj = {
+        "user_themes": [{
+            "url": "THEME_URL",
+            "enable": true
+        }],
+        "user_plugins": [{
+            "url": "PLUGIN_URL",
+            "enable": true
+        }, {
+            "url": "PLUGIN_URL",
+            "enable": true
+        }, {
+            "url": "PLUGIN_URL",
+            "enable": true
+        }],
+        "user_posts": [{
+            "title": "Demo Posting #1",
+            "status": "publish",
+            "type": "post",
+            "content": "Easy Install Rocks!!!",
+            "slug": "demo-posting",
+            "parent": ""
+        }, {
+            "title": "Demo Posting #2",
+            "status": "publish",
+            "type": "post",
+            "content": "Second Blogpost using ei-config!",
+            "slug": "demo-posting-2",
+            "parent": ""
+        }, {
+            "title": "Demo Site #1",
+            "status": "publish",
+            "type": "page",
+            "content": "This is a demo-site!!!",
+            "slug": "demo-site-1",
+            "parent": ""
+        }]
+    };
+    var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+    $('#sample-config-file-download').attr("href", "data:" + data);
+    $('#sample-config-file-download').attr('download', 'ei-config.json');
 });
 var userConfiguration;
 /**
